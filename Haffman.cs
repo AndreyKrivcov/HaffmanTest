@@ -80,27 +80,14 @@ namespace TestHaffman
     {
         public static string GetString(this BitArray array, Encoding encoding)
         {
-            int size = (int)Math.Ceiling(array.Length/8.0);
-            byte[] data = new byte[size];
-
-            for (int i = 0; i < size; ++i)
-            {
-                int length = i * 8 + 8;
-                
-                int m = 1;
-                for (int j = i*8; j < length; ++j)
-                {
-                    if(array.Length <= j)
-                    {
-                        break;
-                    }
-
-                    data[i]+=(byte)(array[j] ? m : 0);
-                    m*=2;
-                }
-            }
-
+            byte[] data = array.ToByteArray();
             return encoding.GetString(data);
+        }
+        public static byte[] ToByteArray(this BitArray array)
+        {
+            byte[] data = new byte[(int)Math.Ceiling(array.Length/8.0)];
+            array.CopyTo(data,0);
+            return data;
         }
         public static BitArray Add(this BitArray array, BitArray other)
         {
@@ -127,11 +114,11 @@ namespace TestHaffman
     }
     public static class StringExtention
     {
-        public static BitArray GetBitArray(this string s, Encoding encoding, int totalBits)
+        public static BitArray GetBitArray(this string s, Encoding encoding, int totalBits = 0)
         {
-            BitArray ba = new BitArray(encoding.GetBytes(s));
-            ba.Length = totalBits;
-            return ba;
+             BitArray ba = new BitArray(encoding.GetBytes(s));
+             ba.Length = totalBits;
+             return ba;
         }
     }
 
